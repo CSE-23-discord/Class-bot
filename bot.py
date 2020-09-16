@@ -11,7 +11,7 @@ bot.remove_command('help')
 
 def getTokens():
 
-	with open("TOKENS.json", 'r') as FPtr:
+	with open("res/TOKENS.json", 'r') as FPtr:
 		tokens = load(FPtr)
 
 	return tokens

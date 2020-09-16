@@ -2,7 +2,7 @@ import csv
 from datetime import datetime, timedelta, date
 import calendar
 
-filename = 'timetable.csv'
+filename = 'res/timetable.csv'
 
 def get_timetable():
 
