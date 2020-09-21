@@ -62,6 +62,8 @@ def check_class(now):
 		diff = next_monday - today
 
 		sleep_time = int(diff.total_seconds() / (60))
+
+		print('Gonna return something dw')
 		
 		return {
 			'content': 'Enjoy your weekend.',
@@ -73,9 +75,11 @@ def check_class(now):
 		tomorrow_date = now + timedelta(days = 1)
 		start_time = datetime.strptime('10:15', '%H:%M').time()
 		tomorrow = datetime.combine(tomorrow_date, start_time)
-		diff = tomorrow - today
+		diff = tomorrow - now
 
 		sleep_time = int(diff.total_seconds() / (60))
+
+		print('Gonna return something dw')
 
 		return {
 			'content' : "That's the end for all the lectures. Enjoy the rest of you day :)",
@@ -88,7 +92,7 @@ def check_class(now):
 
 		# print(datetime.now().time())
 
-		for time_str in timetable_data['times']:
+		for index, time_str in enumerate(timetable_data['times']):
 			
 			class_times = time_str.split('-')
 			# start_time = datetime.strptime(class_times[0], '%H:%M').time()
@@ -96,7 +100,16 @@ def check_class(now):
 			cur_time_diff = get_time_diff(['{}:{}'.format(now.hour, now.minute), class_times[0]])
 
 			if cur_time_diff <= 0:
-				continue
+
+				try:
+					temp = timetable_data['times'][index + 1]
+					continue
+				except IndexError:
+					sleep_time = get_time_diff(['{}:{}'.format(now.hour, now.minute), '16:00'])
+					return {
+						'content': 'Debugging',
+						'sleep_time': sleep_time
+					}
 
 			# TODO: handle index out of range
 
@@ -105,12 +118,25 @@ def check_class(now):
 				print('Time left for next class: {} min'.format(cur_time_diff))
 
 				lec_data = timetable_data['timetable'][today][time_str]
-				sleep_time = get_time_diff(['{}:{}'.format(now.hour, now.minute), class_times[0]])
 
-				sleep_time -= 15
+				try:
+					sleep_time = get_time_diff(['{}:{}'.format(now.hour, now.minute), timetable_data['times'][index + 1].split('-')[0]])
+					sleep_time -= 15
+				
+				except IndexError:
+
+					tomorrow_date = now + timedelta(days = 1)
+					start_time = datetime.strptime('10:15', '%H:%M').time()
+					tomorrow = datetime.combine(tomorrow_date, start_time)
+					diff = tomorrow - now
+
+					sleep_time = int(diff.total_seconds() / (60))
+					lec_data = "Last lecture of the day:\n" + lec_data
 
 				print("Next class: {}".format(lec_data))
 				print("Sleep for {} beacause {}".format(sleep_time, class_times))
+
+				print('Gonna return something dw')
 
 				return {
 					'content': lec_data, 
@@ -126,6 +152,7 @@ def check_class(now):
 				print('Chill, lot of time left for the next class at {}'.format(class_times[0]))
 				print("Sleep for {} beacause {}".format(sleep_time, class_times[0]))
 
+				print('Gonna return something dw')
 				return {
 					'content': 'More than 30 mins left for next class. I will remind 15 mins before class',
 					'sleep_time': sleep_time

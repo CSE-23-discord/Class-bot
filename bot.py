@@ -44,7 +44,7 @@ async def get_updates(ctx):
 
 			update = check_class(datetime.now())
 
-			await ctx.channel.send(update['content'])
+			await ctx.channel.send("Message: {}\nSleeping for: {} mins".format(update['content'], update['sleep_time']))
 			await sleep(update['sleep_time'] * 60)
 
 bot.run(getTokens()['discord-bot'])
