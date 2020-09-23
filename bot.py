@@ -38,7 +38,7 @@ async def test_args(ctx, *args):
 		await ctx.channel.send('Invalid format')
 
 	else:
-		
+		await ctx.channel.send(args)
 
 @bot.command(name = 'mention')
 async def mention(ctx):
