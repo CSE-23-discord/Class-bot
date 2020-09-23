@@ -1,4 +1,4 @@
-from discord.ext.commands import Bot
+from discord.ext.commands import Bot, CommandNotFound
 from asyncio import sleep
 
 from datetime import datetime, timedelta
@@ -23,9 +23,22 @@ async def on_ready():
 		print("\nLogged in as: " + str(bot.user))
 		print("------------------")
 
-@bot.command(name='test')
+@bot.command(name = 'help')
+async def help(ctx):
+	await ctx.channel.send('--test: Check status.\n--getUpdates: start timetable watchdog\nand other testing commands')
+
+@bot.command(name = 'test')
 async def test(ctx):
 	await ctx.channel.send('Hello world')
+
+@bot.command(name = 'testArgs')
+async def test_args(ctx, *args):
+	
+	if (len(args)) != 2:
+		await ctx.channel.send('Invalid format')
+
+	else:
+		
 
 @bot.command(name = 'mention')
 async def mention(ctx):
@@ -46,5 +59,10 @@ async def get_updates(ctx):
 
 			await ctx.channel.send("Message: {}\nSleeping for: {} mins".format(update['content'], update['sleep_time']))
 			await sleep(update['sleep_time'] * 60)
+
+@bot.event
+async def on_command_error(self, ctx, error):
+	if isinstance(error, CommandNotFound):
+		await ctx.channel.send("Sorry {} ! Unknown command\nTry `--help` to see what I can do.".format(ctx.message.author.mention))
 
 bot.run(getTokens()['discord-bot'])

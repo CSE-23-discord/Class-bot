@@ -126,7 +126,7 @@ def check_class(now):
 				except IndexError:
 
 					tomorrow_date = now + timedelta(days = 1)
-					start_time = datetime.strptime('10:15', '%H:%M').time()
+					start_time = datetime.strptime('10:16', '%H:%M').time()
 					tomorrow = datetime.combine(tomorrow_date, start_time)
 					diff = tomorrow - now
 
