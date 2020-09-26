@@ -4,7 +4,7 @@ from asyncio import sleep
 from datetime import datetime, timedelta
 from json import load
 
-from timetable_manager import check_class
+from utils.timetable_manager import check_class
 
 bot = Bot(command_prefix='--')
 bot.remove_command('help')
@@ -44,10 +44,19 @@ async def test_args(ctx, *args):
 async def mention(ctx):
 	await ctx.channel.send('@everyone')
 
-@bot.command(name = 'getUpdates')
-async def get_updates(ctx):
+@bot.command(name = 'timetable-watchdog')
+async def get_updates(ctx, *args):
 
-	if ctx.guild in sub_guild:
+	if (len(args)) != 2:
+		await ctx.channel.send('Invalid format')
+
+	elif args[0] not in ['batch-1', 'batch-2']:
+		await ctx.channel.send('Invalid batch format. Try again.')
+
+	elif args[1] not in ['1', '2']:
+		await ctx.channel.send('Invalid week format. Try again.')
+
+	elif ctx.guild in sub_guild:
 		await ctx.channel.send('Already subscribed')
 
 	else:
@@ -61,7 +70,7 @@ async def get_updates(ctx):
 			await sleep(update['sleep_time'] * 60)
 
 @bot.event
-async def on_command_error(self, ctx, error):
+async def on_command_error(ctx, error):
 	if isinstance(error, CommandNotFound):
 		await ctx.channel.send("Sorry {} ! Unknown command\nTry `--help` to see what I can do.".format(ctx.message.author.mention))
 
