@@ -2,13 +2,15 @@ import csv
 from datetime import datetime, timedelta, date
 import calendar
 
-filename = 'res/timetable.csv'
+week = 0
 
-def get_timetable():
+def get_timetable(batch, week):
 
 	timetable = {}
 
 	times = []
+
+	filename = 'res/batch-{}-week-{}.csv'.format(batch, week)
 
 	with open(filename, 'r') as FPtr: 
 		
@@ -47,7 +49,7 @@ def get_time_diff(time_list):
 	
 	return int((date_time2 - date_time1).total_seconds() / 60)
 
-def check_class(now):
+def check_class(now, batch, week):
 
 	today = calendar.day_abbr[now.weekday()]
 
@@ -88,7 +90,7 @@ def check_class(now):
 
 	else:
 
-		timetable_data = get_timetable()
+		timetable_data = get_timetable(batch, week[0])
 
 		# print(datetime.now().time())
 
@@ -111,11 +113,8 @@ def check_class(now):
 						'sleep_time': sleep_time
 					}
 
-			# TODO: handle index out of range
 
 			elif cur_time_diff <= 15:
-
-				print('Time left for next class: {} min'.format(cur_time_diff))
 
 				lec_data = timetable_data['timetable'][today][time_str]
 
@@ -126,12 +125,20 @@ def check_class(now):
 				except IndexError:
 
 					tomorrow_date = now + timedelta(days = 1)
-					start_time = datetime.strptime('10:16', '%H:%M').time()
+					start_time = datetime.strptime('10:15', '%H:%M').time()
 					tomorrow = datetime.combine(tomorrow_date, start_time)
 					diff = tomorrow - now
 
 					sleep_time = int(diff.total_seconds() / (60))
 					lec_data = "Last lecture of the day:\n" + lec_data
+
+					tomorrow_day = calendar.day_abbr[tomorrow_date.weekday()]
+
+					if(tomorrow_day == 'Sat'):
+						if(week[0] == 1):
+							week[0] += 1
+						else:
+							week[0] -= 1
 
 				print("Next class: {}".format(lec_data))
 				print("Sleep for {} beacause {}".format(sleep_time, class_times))
@@ -163,5 +170,7 @@ def check_class(now):
 
 if __name__ == "__main__":
 	
-	check_class(datetime.now())
+	batch = 1
+	week = 1
+	check_class(datetime.now(), batch, week)
 	# print(get_timetable()['timetable'])
