@@ -125,7 +125,7 @@ def check_class(now, batch, week):
 				except IndexError:
 
 					tomorrow_date = now + timedelta(days = 1)
-					start_time = datetime.strptime('10:15', '%H:%M').time()
+					start_time = datetime.strptime('10:16', '%H:%M').time()
 					tomorrow = datetime.combine(tomorrow_date, start_time)
 					diff = tomorrow - now
 
@@ -154,7 +154,9 @@ def check_class(now, batch, week):
 
 				lec_data = timetable_data['timetable'][today][time_str]
 				sleep_time = get_time_diff(['{}:{}'.format(now.hour, now.minute), class_times[0]])
-				sleep_time -= 15
+
+				if(sleep_time > 15):
+					sleep_time -= 15
 
 				print('Chill, lot of time left for the next class at {}'.format(class_times[0]))
 				print("Sleep for {} beacause {}".format(sleep_time, class_times[0]))
